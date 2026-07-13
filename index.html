@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prototipos de Realidad Aumentada & IA</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: #11111b;
+            color: #cdd6f4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            color: #a6e3a1;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #bac2de;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        .card {
+            background-color: #1e1e2e;
+            border: 1px solid #313244;
+            border-radius: 16px;
+            padding: 24px;
+            text-align: left;
+            text-decoration: none;
+            color: inherit;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: #89b4fa;
+        }
+
+        .card h2 {
+            margin: 0 0 10px 0;
+            font-size: 1.4rem;
+            color: #89b4fa;
+        }
+
+        .card p {
+            margin: 0;
+            font-size: 0.95rem;
+            color: #a6adc8;
+            text-align: left;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Laboratorio WebAR & IA 🚀</h1>
+    <p>Selecciona un prototipo para iniciar la experiencia interactiva desde tu navegador.</p>
+
+    <div class="grid">
+        <!-- 1. Detector de Gestos -->
+        <a href="proyecto-gestos-gatos/" class="card">
+            <h2>🐱 Detector Gatuno</h2>
+            <p>Detección de expresiones faciales y gestos de manos con MediaPipe. ¡Tu rostro define al gato!</p>
+        </a>
+
+        <!-- 2. Manipulación de Bloques -->
+        <a href="proyecto-bloques-fisicos/" class="card">
+            <h2>🙌 Bloques Físicos</h2>
+            <p>Usa tus manos para pellizcar, levantar, apilar y derribar bloques virtuales usando Matter.js.</p>
+        </a>
+
+        <!-- 3. Realidad Aumentada con Marcador -->
+        <a href="proyecto-ar-marcadores/" class="card">
+            <h2>📸 Escáner Gato Oiia</h2>
+            <p>Apunta tu cámara al póster del gato de Oiia Oiia y mira cómo cobra vida en Realidad Aumentada con MindAR.
+            </p>
+        </a>
+
+        <!-- 4. Filtro Burrito -->
+        <a href="filtro-burrito-ar/" class="card">
+            <h2>🌯 Filtro Burrito 3D</h2>
+            <p>Experiencia interactiva en 3D utilizando Vite, Three.js y MindAR para renderizar un modelo GLTF.</p>
+        </a>
+    </div>
+
+</body>
+
+</html>

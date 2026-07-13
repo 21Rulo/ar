@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prototipo AR: Cabeza de Burrito</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background-color: #000;
+      font-family: sans-serif;
+    }
+
+    #ar-container {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+    }
+
+    /* Estilo para un indicador de carga sutil */
+    #loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 1.5rem;
+      z-index: 10;
+    }
+  </style>
+  <script type="module" crossorigin src="/ar/filtro-burrito-ar/assets/index-B8uyNKEc.js"></script>
+</head>
+
+<body>
+  <div id="loading">Iniciando Cámara e IA...</div>
+  <div id="ar-container"></div>
+
+</body>
+
+</html>

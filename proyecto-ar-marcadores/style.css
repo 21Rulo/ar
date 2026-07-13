@@ -1,0 +1,38 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+#ui-overlay {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 999;
+    /* Asegura que flote sobre la cámara */
+    background: rgba(17, 17, 27, 0.85);
+    backdrop-filter: blur(8px);
+    color: #cdd6f4;
+    padding: 12px 24px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    pointer-events: none;
+    /* No interfiere con clicks en la pantalla */
+    width: 80%;
+    max-width: 450px;
+}
+
+#ui-overlay h1 {
+    font-size: 1.2rem;
+    margin: 0 0 4px 0;
+    color: #a6e3a1;
+}
+
+#ui-overlay p {
+    font-size: 0.9rem;
+    margin: 0;
+    opacity: 0.8;
+}

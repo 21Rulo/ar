@@ -1,0 +1,60 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background-color: #11111b;
+    color: #cdd6f4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+.game-container {
+    text-align: center;
+    width: 100%;
+    max-width: 800px;
+}
+
+.canvas-wrapper {
+    position: relative;
+    width: 640px;
+    height: 480px;
+    margin: 0 auto;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+}
+
+/* Ponemos la webcam abajo como referencia visual de fondo */
+#webcam {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: rotateY(180deg);
+    /* Espejo */
+    opacity: 0.3;
+    /* Transparente para ver bien los bloques */
+    z-index: 1;
+}
+
+/* El contenedor del motor de físicas encima de la cámara */
+#matter-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+}
+
+#matter-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+    background: transparent !important;
+    /* Permite ver la cámara de fondo */
+}

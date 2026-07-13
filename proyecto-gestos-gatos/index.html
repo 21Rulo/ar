@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Detector de Gestos - Gatos</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Quitamos el script viejo de MediaPipe que estaba aquí -->
+</head>
+
+<body>
+    <div class="container">
+        <!-- Lado Izquierdo: El usuario -->
+        <div class="section video-section">
+            <h2>Tú</h2>
+            <div class="video-wrapper">
+                <video id="webcam" autoplay playsinline></video>
+                <canvas id="output_canvas"></canvas>
+            </div>
+        </div>
+
+        <!-- Lado Derecho: El Gato correspondiente -->
+        <div class="section cat-section">
+            <h2>Tu Estado Gatuno</h2>
+            <div class="cat-card">
+                <img id="cat-display" src="public/serio.png" alt="Gato Estado">
+                <p id="status-text">Detectando...</p>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="app.js"></script>
+</body>
+
+</html>

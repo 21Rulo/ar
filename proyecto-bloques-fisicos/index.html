@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Manipulación de Bloques Virtuales con Físicas</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="game-container">
+        <h1>Interactúa con tus Manos 🙌</h1>
+        <p id="status-text">Cargando modelos físicos y visuales...</p>
+
+        <div class="canvas-wrapper">
+            <!-- El video de la webcam (lo ideal es ponerlo semitransparente de fondo) -->
+            <video id="webcam" autoplay playsinline></video>
+            <!-- El canvas donde Matter.js dibujará los bloques y donde simularemos el cursor de la mano -->
+            <div id="matter-container"></div>
+        </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+
+</html>
