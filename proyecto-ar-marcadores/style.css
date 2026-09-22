@@ -11,6 +11,10 @@ body {
     font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
+.a-enter-vr {
+  display: none !important;
+}
+
 #ui-overlay {
     position: absolute;
     top: 20px;
