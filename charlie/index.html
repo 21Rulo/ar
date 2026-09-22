@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
+  <title>Charlie 🥳🎉🐊</title>
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+
+<body>
+  <div id="app">
+
+    <!-- ============ PANTALLA 1: START SCREEN ============ -->
+    <section id="start-screen" class="screen screen--active">
+      <div class="album-frame">
+        <p class="eyebrow">💚 Charlie 💚</p>
+        <h1 class="album-title">FELIZ<span>CUMPLEAÑOS</span></h1>
+        <p class="album-subtitle">Para una persona tan increíble como tú</p>
+
+        <button id="gift-box" class="gift-box" aria-label="Abrir regalo">
+          <span class="gift-box__emoji">🎁</span>
+          <span class="gift-box__glow"></span>
+        </button>
+
+        <p class="start-hint">Toca el regalo para comenzar</p>
+        <p id="permission-error" class="permission-error" hidden>
+          Necesito permiso de tu cámara para que la magia funcione 🥺 Revisa los permisos del navegador e inténtalo de
+          nuevo.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============ PANTALLA 2: AR / CÁMARA ============ -->
+    <section id="ar-screen" class="screen">
+      <div class="mission-card" id="mission-card">
+        <div class="mission-card__dots" id="mission-dots"></div>
+        <p class="mission-card__eyebrow">MISIÓN <span id="mission-current-text"></span></p>
+        <h2 class="mission-card__title" id="mission-title">Título</h2>
+        <p class="mission-card__desc" id="mission-desc">Descripción de la misión</p>
+      </div>
+
+      <div class="camera-wrap" id="camera-wrap">
+        <video id="webcam" autoplay playsinline muted style="visibility: visible; opacity: 1;"></video>
+        <canvas id="output-canvas"></canvas>
+        <div class="scan-overlay"></div>
+      </div>
+
+      <div id="snow-container" class="snow-container"></div>
+
+      <div id="success-badge" class="success-badge" hidden>
+        <img id="success-badge-img" src="" alt="Éxito" />
+        <h3 id="success-badge-text" class="success-badge-text"></h3>
+      </div>
+
+      <button id="audio-toggle" class="audio-toggle" aria-label="Reproducir música">
+        <span id="audio-toggle-icon">🔊</span>
+      </button>
+    </section>
+
+    <!-- ============ REPRODUCTOR OCULTO/FLOTANTE ============ -->
+    <audio id="bg-audio" src="assets/audio/happy.ogg" loop preload="none"></audio>
+
+    <!-- ============ MODAL: PHOTOCARD FINAL ============ -->
+    <div id="photocard-modal" class="modal" hidden>
+      <div class="modal__backdrop"></div>
+      <div class="modal__content">
+        <div class="photocard" id="photocard">
+          <div class="photocard__inner">
+            <img class="photocard__img" src="https://placehold.co/400x600/A3B18A/ffffff?text=Photocard+Campeche"
+              alt="Photocard de cumpleaños con temática de cocodrilo y murallas de Campeche" />
+            <div class="photocard__foil"></div>
+            <div class="photocard__caption">
+              <p class="photocard__eyebrow">EDICIÓN LIMITADA · CHARLIE</p>
+              <h3 class="photocard__title">¡Feliz Cumpleaños! 🐊💚</h3>
+              <p class="photocard__text">Espero que este nuevo año venga con muchas cosas buenas, momentos que te hagan
+                feliz y muchas razones para sonreír. Me alegra mucho haber coincidido contigo y haber conocido a alguien
+                como tú. Disfruta mucho de tu día </p>
+            </div>
+          </div>
+        </div>
+        <div class="modal__actions">
+          <button id="keep-playing" class="btn-primary">Repetir</button>
+          <button id="download-collage" class="btn-primary">Guardar 📷</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <script type="module" src="/src/main.js"></script>
+</body>
+
+</html>
