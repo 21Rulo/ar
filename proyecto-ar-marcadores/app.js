@@ -175,6 +175,47 @@ function fitVideoAspectRatio() {
 }
 
 // ---------------------------------------------------------------------------
+// Soporte de rotación (vertical ↔ horizontal)
+// ---------------------------------------------------------------------------
+
+/**
+ * MindAR lee las dimensiones del stream de la cámara UNA sola vez al arrancar
+ * y construye el controlador de tracking con ellas. Al girar el celular el
+ * stream cambia de, p. ej., 480x640 a 640x480, pero el controlador sigue con
+ * las medidas viejas y deja de reconocer el póster. La solución es reiniciar
+ * el sistema de MindAR cada vez que cambia la orientación.
+ */
+function handleOrientationChanges() {
+  const arSystem = scene.systems['mindar-image-system'];
+  if (!arSystem) return;
+
+  let restartTimer = null;
+
+  const restartAR = () => {
+    clearTimeout(restartTimer);
+    // Esperamos a que el navegador termine de rotar y reajustar el viewport.
+    restartTimer = setTimeout(async () => {
+      console.log('[AR] Cambio de orientación → reiniciando MindAR');
+      video.pause();
+      setStatus(STATUS.IDLE);
+      try {
+        arSystem.stop();
+        await arSystem.start();
+      } catch (err) {
+        console.error('[AR] No se pudo reiniciar MindAR tras rotar:', err);
+      }
+    }, 500);
+  };
+
+  if (screen.orientation?.addEventListener) {
+    screen.orientation.addEventListener('change', restartAR);
+  } else {
+    // Fallback para Safari iOS antiguo.
+    window.addEventListener('orientationchange', restartAR);
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Requisito 4: Inicialización encapsulada y control de errores
 // ---------------------------------------------------------------------------
 
@@ -200,6 +241,8 @@ function init() {
 
   // Requisito 3 — proporciones del plano.
   fitVideoAspectRatio();
+
+  handleOrientationChanges();
 
   setStatus(STATUS.IDLE);
   console.log('[AR] Controlador inicializado y a la espera de targets.');
