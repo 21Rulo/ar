@@ -21,7 +21,7 @@
 // Constantes de estado (centralizadas para evitar "strings mágicos" dispersos)
 // ---------------------------------------------------------------------------
 const STATUS = Object.freeze({
-  IDLE: 'Apunta la webcam al póster en tu celular...',
+  IDLE: 'Apunta la cámara al póster...',
   DETECTED: '¡Póster detectado! Reproduciendo video... 🎬',
   LOST: 'Póster fuera de cuadro. Busca de nuevo el póster para continuar 🔍',
 });

@@ -11,9 +11,6 @@ body {
     font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
-.a-enter-vr {
-  display: none !important;
-}
 
 #ui-overlay {
     position: absolute;
@@ -163,4 +160,10 @@ body {
 
 #sound-button[hidden] {
     display: none;
+}
+
+/* Oculta los botones "Enter VR/AR" que A-Frame inyecta en la esquina inferior derecha */
+.a-enter-vr,
+.a-enter-ar {
+    display: none !important;
 }
