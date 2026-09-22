@@ -24,9 +24,15 @@ const STATUS = Object.freeze({
   IDLE: 'Apunta la webcam al póster en tu celular...',
   DETECTED: '¡Póster detectado! Reproduciendo video... 🎬',
   LOST: 'Póster fuera de cuadro. Busca de nuevo el póster para continuar 🔍',
-  MUTED_FALLBACK:
-    '¡Póster detectado! Reproduciendo (sin sonido). Toca la pantalla para activar el audio 🔇',
 });
+
+// Mensajes que rotan en la pantalla de carga mientras MindAR arranca.
+const LOADER_MESSAGES = [
+  'Calibrando escáner AR...',
+  'Sincronizando con el servidor...',
+  'Cargando marcadores...',
+  'Inicializando cámara...',
+];
 
 // ---------------------------------------------------------------------------
 // Referencias del DOM (Requisito 1)
@@ -35,9 +41,10 @@ const target = document.querySelector('#portfolio-target');
 const videoScreen = document.querySelector('#video-screen');
 const video = document.querySelector('#ar-video');
 const statusText = document.querySelector('#status-text');
-
-// Bandera para no volver a mostrar el "click para audio" más de lo necesario.
-let audioUnlocked = false;
+const loader = document.querySelector('#ar-loader');
+const loaderText = document.querySelector('#loader-text');
+const soundButton = document.querySelector('#sound-button');
+const scene = document.querySelector('a-scene');
 
 /**
  * Actualiza de forma segura el texto de estado en la interfaz superior.
@@ -54,63 +61,55 @@ function setStatus(message) {
 // ---------------------------------------------------------------------------
 
 /**
- * Intenta reproducir el video gestionando las políticas de autoplay.
+ * Reproduce el video al detectar el póster.
  *
- * La mayoría de navegadores móviles bloquean `play()` con audio si todavía no
- * ha habido una interacción del usuario. La promesa devuelta por `play()`
- * rechaza en ese caso (NotAllowedError), así que:
- *   1. Reintentamos silenciando el video (autoplay silencioso SÍ está permitido).
- *   2. Registramos un "desbloqueo" de audio al primer toque en pantalla.
+ * El <video> arranca muteado (atributo `muted` en index.html) porque los
+ * navegadores móviles, sobre todo iOS, bloquean el autoplay con sonido. Así la
+ * reproducción es inmediata, sin esperar a que el usuario toque la pantalla.
+ * Si el usuario ya activó el sonido pero el navegador vuelve a bloquearlo,
+ * reintentamos en silencio.
  */
 async function playVideo() {
   if (!video) return;
 
   try {
-    // Primer intento: reproducción con sonido.
     await video.play();
-    setStatus(STATUS.DETECTED);
   } catch (err) {
-    console.warn('[AR] Autoplay con audio bloqueado, intentando en silencio:', err);
-
+    if (video.muted) {
+      console.error('[AR] No se pudo reproducir el video:', err);
+      setStatus('No se pudo reproducir el video. Revisa los permisos del navegador ⚠️');
+      return;
+    }
+    console.warn('[AR] Audio bloqueado, reproduciendo en silencio:', err);
+    video.muted = true;
     try {
-      // Segundo intento: reproducción silenciada (permitida sin interacción).
-      video.muted = true;
       await video.play();
-      setStatus(STATUS.MUTED_FALLBACK);
-      registerAudioUnlock();
     } catch (fatalErr) {
-      // Si ni siquiera el modo silencioso arranca, informamos del error.
       console.error('[AR] No se pudo reproducir el video:', fatalErr);
       setStatus('No se pudo reproducir el video. Revisa los permisos del navegador ⚠️');
+      return;
     }
   }
+
+  setStatus(STATUS.DETECTED);
+  // El botón de audio solo aparece cuando el video ya está flotando sobre el póster.
+  soundButton.hidden = !video.muted;
 }
 
 /**
- * Registra un listener de un solo uso que reactiva el audio en el primer
- * gesto del usuario (click/touch), cumpliendo con las políticas de autoplay.
+ * Activa el audio desde el botón flotante. Al ejecutarse dentro de un gesto
+ * del usuario, el navegador permite reproducir con sonido.
  */
-function registerAudioUnlock() {
-  if (audioUnlocked) return;
-
-  const unlock = async () => {
-    video.muted = false;
-    try {
-      // Reanudamos solo si el póster sigue siendo visible.
-      if (!video.paused || target?.object3D?.visible) {
-        await video.play();
-      }
-      audioUnlocked = true;
-      // Si el póster sigue en cuadro, restauramos el mensaje "con audio".
-      if (target?.object3D?.visible) setStatus(STATUS.DETECTED);
-    } catch (err) {
-      console.warn('[AR] No se pudo activar el audio tras la interacción:', err);
-    }
-  };
-
-  // `once: true` limpia el listener automáticamente tras el primer disparo.
-  window.addEventListener('click', unlock, { once: true });
-  window.addEventListener('touchstart', unlock, { once: true });
+async function enableSound() {
+  video.muted = false;
+  soundButton.hidden = true;
+  try {
+    if (target?.object3D?.visible) await video.play();
+  } catch (err) {
+    console.warn('[AR] No se pudo activar el audio:', err);
+    video.muted = true;
+    soundButton.hidden = false;
+  }
 }
 
 /**
@@ -128,6 +127,7 @@ function onTargetFound() {
 function onTargetLost() {
   console.log('[AR] targetLost → póster fuera de cuadro');
   if (video) video.pause();
+  soundButton.hidden = true;
   setStatus(STATUS.LOST);
 }
 
@@ -175,6 +175,51 @@ function fitVideoAspectRatio() {
 }
 
 // ---------------------------------------------------------------------------
+// Pantalla de carga "escáner"
+// ---------------------------------------------------------------------------
+
+let loaderInterval = null;
+
+/**
+ * Muestra la pantalla de carga y rota sus mensajes para que la espera se
+ * sienta como un proceso "avanzado" en lugar de una web cargando.
+ * @param {string} [firstMessage]
+ */
+function showLoader(firstMessage = LOADER_MESSAGES[0]) {
+  let i = Math.max(0, LOADER_MESSAGES.indexOf(firstMessage));
+  loader.classList.remove('hidden', 'error');
+  loaderText.textContent = firstMessage;
+
+  clearInterval(loaderInterval);
+  loaderInterval = setInterval(() => {
+    i = (i + 1) % LOADER_MESSAGES.length;
+    loaderText.textContent = LOADER_MESSAGES[i];
+  }, 1200);
+}
+
+function hideLoader() {
+  clearInterval(loaderInterval);
+  loader.classList.add('hidden');
+}
+
+/**
+ * Muestra un error en la pantalla de carga (p. ej. permiso de cámara denegado).
+ */
+function showLoaderError() {
+  clearInterval(loaderInterval);
+  loader.classList.remove('hidden');
+  loader.classList.add('error');
+  loaderText.textContent =
+    'No se pudo acceder a la cámara. Permite el acceso en tu navegador y recarga la página 📷';
+}
+
+// Se registran de inmediato (no en init) para no perder los eventos de MindAR
+// si la escena arranca antes de que se dispare `loaded`.
+showLoader();
+scene?.addEventListener('arReady', hideLoader);
+scene?.addEventListener('arError', showLoaderError);
+
+// ---------------------------------------------------------------------------
 // Soporte de rotación (vertical ↔ horizontal)
 // ---------------------------------------------------------------------------
 
@@ -197,7 +242,9 @@ function handleOrientationChanges() {
     restartTimer = setTimeout(async () => {
       console.log('[AR] Cambio de orientación → reiniciando MindAR');
       video.pause();
+      soundButton.hidden = true;
       setStatus(STATUS.IDLE);
+      showLoader('Calibrando escáner AR...');
       try {
         arSystem.stop();
         await arSystem.start();
@@ -225,12 +272,13 @@ function handleOrientationChanges() {
  */
 function init() {
   // Validación defensiva: si falta algún nodo crítico, abortamos con contexto.
-  if (!target || !video || !videoScreen || !statusText) {
+  if (!target || !video || !videoScreen || !statusText || !soundButton) {
     console.error('[AR] Faltan elementos del DOM requeridos. Revisa index.html.', {
       target,
       video,
       videoScreen,
       statusText,
+      soundButton,
     });
     return;
   }
@@ -242,6 +290,8 @@ function init() {
   // Requisito 3 — proporciones del plano.
   fitVideoAspectRatio();
 
+  soundButton.addEventListener('click', enableSound);
+
   handleOrientationChanges();
 
   setStatus(STATUS.IDLE);
@@ -251,8 +301,6 @@ function init() {
 // A-Frame monta la escena de forma asíncrona. Esperamos al evento `loaded`
 // de <a-scene> para asegurar que la entidad objetivo ya tiene su componente
 // `mindar-image-target` listo para emitir eventos.
-const scene = document.querySelector('a-scene');
-
 if (scene?.hasLoaded) {
   init();
 } else {

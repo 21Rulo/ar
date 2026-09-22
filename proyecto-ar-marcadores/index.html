@@ -13,6 +13,20 @@
 </head>
 
 <body>
+    <!-- Pantalla de carga: se muestra mientras MindAR descarga el modelo y abre la cámara -->
+    <div id="ar-loader" role="status" aria-live="polite">
+        <div class="scanner-frame">
+            <span class="corner tl"></span><span class="corner tr"></span>
+            <span class="corner bl"></span><span class="corner br"></span>
+            <div class="scan-line"></div>
+        </div>
+        <p id="loader-text">Calibrando escáner AR...</p>
+        <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+    </div>
+
+    <!-- Botón para activar el audio (solo aparece cuando el video ya está sobre el póster) -->
+    <button id="sound-button" type="button" hidden>🔊 Activar sonido</button>
+
     <!-- Interfaz de usuario superior para estados -->
     <div id="ui-overlay">
         <h1>Escaner WebAR Activo 📷</h1>
@@ -21,13 +35,13 @@
 
     <!-- Escena de Realidad Aumentada de MindAR -->
     <!-- 'imageTargetSrc' apunta al archivo compilado de tu póster -->
-    <a-scene mindar-image="imageTargetSrc: public/targets.mind; autoStart: true; uiLoading: no; uiScanning: yes;"
+    <a-scene mindar-image="imageTargetSrc: public/targets.mind; autoStart: true; uiLoading: no; uiScanning: yes; uiError: no;"
         color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false"
         device-orientation-permission-ui="enabled: false">
 
         <a-assets>
             <!-- Pre-cargamos el video para controlarlo por código -->
-            <video id="ar-video" src="public/video.mp4" response-type="arraybuffer" loop playsinline
+            <video id="ar-video" src="public/video.mp4" response-type="arraybuffer" loop muted playsinline
                 webkit-playsinline></video>
         </a-assets>
 

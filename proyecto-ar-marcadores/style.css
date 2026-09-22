@@ -1,3 +1,10 @@
+:root {
+    /* Colores de la institución: cambia estos valores para personalizar el loader */
+    --brand-bg: #11111b;
+    --brand-primary: #a6e3a1;
+    --brand-text: #cdd6f4;
+}
+
 body {
     margin: 0;
     overflow: hidden;
@@ -35,4 +42,121 @@ body {
     font-size: 0.9rem;
     margin: 0;
     opacity: 0.8;
+}
+
+/* ---------------------------------------------------------------------------
+   Pantalla de carga "escáner"
+   --------------------------------------------------------------------------- */
+#ar-loader {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    background: var(--brand-bg);
+    color: var(--brand-text);
+    transition: opacity 0.5s ease;
+}
+
+#ar-loader.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.scanner-frame {
+    position: relative;
+    width: 55vmin;
+    height: 55vmin;
+    max-width: 260px;
+    max-height: 260px;
+    overflow: hidden;
+}
+
+.corner {
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    border: 3px solid var(--brand-primary);
+}
+
+.corner.tl { top: 0; left: 0; border-right: none; border-bottom: none; }
+.corner.tr { top: 0; right: 0; border-left: none; border-bottom: none; }
+.corner.bl { bottom: 0; left: 0; border-right: none; border-top: none; }
+.corner.br { bottom: 0; right: 0; border-left: none; border-top: none; }
+
+.scan-line {
+    position: absolute;
+    left: 8%;
+    width: 84%;
+    height: 2px;
+    background: var(--brand-primary);
+    box-shadow: 0 0 12px 2px var(--brand-primary);
+    animation: scan 1.8s ease-in-out infinite alternate;
+}
+
+@keyframes scan {
+    from { top: 6%; }
+    to { top: 94%; }
+}
+
+#loader-text {
+    margin: 0;
+    font-size: 1rem;
+    letter-spacing: 0.05em;
+    font-family: ui-monospace, 'Cascadia Code', monospace;
+    text-align: center;
+    padding: 0 16px;
+}
+
+.loader-bar {
+    width: 55vmin;
+    max-width: 260px;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.loader-bar-fill {
+    width: 40%;
+    height: 100%;
+    background: var(--brand-primary);
+    animation: progress 1.4s ease-in-out infinite;
+}
+
+@keyframes progress {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(250%); }
+}
+
+#ar-loader.error .scan-line,
+#ar-loader.error .loader-bar {
+    display: none;
+}
+
+/* ---------------------------------------------------------------------------
+   Botón flotante para activar el audio
+   --------------------------------------------------------------------------- */
+#sound-button {
+    position: fixed;
+    bottom: calc(24px + env(safe-area-inset-bottom));
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 999;
+    padding: 10px 20px;
+    font: inherit;
+    font-size: 0.95rem;
+    color: var(--brand-text);
+    background: rgba(17, 17, 27, 0.75);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--brand-primary);
+    border-radius: 999px;
+    cursor: pointer;
+}
+
+#sound-button[hidden] {
+    display: none;
 }
