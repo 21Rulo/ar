@@ -26,14 +26,6 @@ const STATUS = Object.freeze({
   LOST: 'Póster fuera de cuadro. Busca de nuevo el póster para continuar 🔍',
 });
 
-// Mensajes que rotan en la pantalla de carga mientras MindAR arranca.
-const LOADER_MESSAGES = [
-  'Calibrando escáner AR...',
-  'Sincronizando con el servidor...',
-  'Cargando marcadores...',
-  'Inicializando cámara...',
-];
-
 // ---------------------------------------------------------------------------
 // Referencias del DOM (Requisito 1)
 // ---------------------------------------------------------------------------
@@ -41,8 +33,6 @@ const target = document.querySelector('#portfolio-target');
 const videoScreen = document.querySelector('#video-screen');
 const video = document.querySelector('#ar-video');
 const statusText = document.querySelector('#status-text');
-const loader = document.querySelector('#ar-loader');
-const loaderText = document.querySelector('#loader-text');
 const soundButton = document.querySelector('#sound-button');
 const scene = document.querySelector('a-scene');
 
@@ -174,50 +164,11 @@ function fitVideoAspectRatio() {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Pantalla de carga "escáner"
-// ---------------------------------------------------------------------------
-
-let loaderInterval = null;
-
-/**
- * Muestra la pantalla de carga y rota sus mensajes para que la espera se
- * sienta como un proceso "avanzado" en lugar de una web cargando.
- * @param {string} [firstMessage]
- */
-function showLoader(firstMessage = LOADER_MESSAGES[0]) {
-  let i = Math.max(0, LOADER_MESSAGES.indexOf(firstMessage));
-  loader.classList.remove('hidden', 'error');
-  loaderText.textContent = firstMessage;
-
-  clearInterval(loaderInterval);
-  loaderInterval = setInterval(() => {
-    i = (i + 1) % LOADER_MESSAGES.length;
-    loaderText.textContent = LOADER_MESSAGES[i];
-  }, 1200);
-}
-
-function hideLoader() {
-  clearInterval(loaderInterval);
-  loader.classList.add('hidden');
-}
-
-/**
- * Muestra un error en la pantalla de carga (p. ej. permiso de cámara denegado).
- */
-function showLoaderError() {
-  clearInterval(loaderInterval);
-  loader.classList.remove('hidden');
-  loader.classList.add('error');
-  loaderText.textContent =
-    'No se pudo acceder a la cámara. Permite el acceso en tu navegador y recarga la página 📷';
-}
-
-// Se registran de inmediato (no en init) para no perder los eventos de MindAR
-// si la escena arranca antes de que se dispare `loaded`.
-showLoader();
-scene?.addEventListener('arReady', hideLoader);
-scene?.addEventListener('arError', showLoaderError);
+// Sin pantalla de carga: si MindAR no puede abrir la cámara (p. ej. permiso
+// denegado), lo avisamos en el texto de estado para no dejar al usuario a ciegas.
+scene?.addEventListener('arError', () => {
+  setStatus('No se pudo acceder a la cámara. Permite el acceso y recarga la página 📷');
+});
 
 // ---------------------------------------------------------------------------
 // Soporte de rotación (vertical ↔ horizontal)
@@ -244,7 +195,6 @@ function handleOrientationChanges() {
       video.pause();
       soundButton.hidden = true;
       setStatus(STATUS.IDLE);
-      showLoader('Calibrando escáner AR...');
       try {
         arSystem.stop();
         await arSystem.start();
