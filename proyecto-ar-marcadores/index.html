@@ -14,8 +14,8 @@
 </head>
 
 <body>
-    <!-- Botón para activar el audio (solo aparece cuando el video ya está sobre el póster) -->
-    <button id="sound-button" type="button" hidden>🔊 Activar sonido</button>
+    <!-- Botón para silenciar/activar el audio (solo aparece cuando el video ya está sobre el póster) -->
+    <button id="sound-button" type="button" hidden>🔇 Silenciar</button>
 
     <!-- Interfaz de usuario superior para estados -->
     <div id="ui-overlay">
@@ -32,7 +32,7 @@
 
         <a-assets>
             <!-- Pre-cargamos el video para controlarlo por código -->
-            <video id="ar-video" src="public/video.mp4" response-type="arraybuffer" loop muted playsinline
+            <video id="ar-video" src="public/video.mp4" response-type="arraybuffer" loop playsinline
                 webkit-playsinline></video>
         </a-assets>
 

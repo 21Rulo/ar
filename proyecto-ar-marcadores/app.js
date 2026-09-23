@@ -50,18 +50,28 @@ function setStatus(message) {
 // Requisito 2: Manejo del ciclo de vida del tracking
 // ---------------------------------------------------------------------------
 
+// Preferencia del usuario: el audio va activado por defecto hasta que lo silencie.
+let userMuted = false;
+
+/**
+ * Actualiza el texto del botón según el estado real del audio del video.
+ */
+function updateSoundButton() {
+  soundButton.textContent = video.muted ? '🔊 Activar sonido' : '🔇 Silenciar';
+}
+
 /**
  * Reproduce el video al detectar el póster.
  *
- * El <video> arranca muteado (atributo `muted` en index.html) porque los
- * navegadores móviles, sobre todo iOS, bloquean el autoplay con sonido. Así la
- * reproducción es inmediata, sin esperar a que el usuario toque la pantalla.
- * Si el usuario ya activó el sonido pero el navegador vuelve a bloquearlo,
- * reintentamos en silencio.
+ * Intentamos siempre con sonido (salvo que el usuario lo haya silenciado). Los
+ * navegadores móviles, sobre todo iOS, pueden bloquear el autoplay con sonido
+ * si aún no hubo un toque en la página; en ese caso reintentamos en silencio y
+ * el botón pasa a "Activar sonido".
  */
 async function playVideo() {
   if (!video) return;
 
+  video.muted = userMuted;
   try {
     await video.play();
   } catch (err) {
@@ -70,7 +80,7 @@ async function playVideo() {
       setStatus('No se pudo reproducir el video. Revisa los permisos del navegador ⚠️');
       return;
     }
-    console.warn('[AR] Audio bloqueado, reproduciendo en silencio:', err);
+    console.warn('[AR] Audio bloqueado por el navegador, reproduciendo en silencio:', err);
     video.muted = true;
     try {
       await video.play();
@@ -82,24 +92,32 @@ async function playVideo() {
   }
 
   setStatus(STATUS.DETECTED);
-  // El botón de audio solo aparece cuando el video ya está flotando sobre el póster.
-  soundButton.hidden = !video.muted;
+  // El botón solo aparece cuando el video ya está flotando sobre el póster.
+  updateSoundButton();
+  soundButton.hidden = false;
 }
 
 /**
- * Activa el audio desde el botón flotante. Al ejecutarse dentro de un gesto
- * del usuario, el navegador permite reproducir con sonido.
+ * Alterna el audio desde el botón flotante. Al ejecutarse dentro de un gesto
+ * del usuario, el navegador sí permite activar el sonido.
  */
-async function enableSound() {
+async function toggleSound() {
+  if (!video.muted) {
+    userMuted = true;
+    video.muted = true;
+    updateSoundButton();
+    return;
+  }
+
+  userMuted = false;
   video.muted = false;
-  soundButton.hidden = true;
   try {
     if (target?.object3D?.visible) await video.play();
   } catch (err) {
     console.warn('[AR] No se pudo activar el audio:', err);
     video.muted = true;
-    soundButton.hidden = false;
   }
+  updateSoundButton();
 }
 
 /**
@@ -240,7 +258,7 @@ function init() {
   // Requisito 3 — proporciones del plano.
   fitVideoAspectRatio();
 
-  soundButton.addEventListener('click', enableSound);
+  soundButton.addEventListener('click', toggleSound);
 
   handleOrientationChanges();
 
