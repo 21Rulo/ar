@@ -2,6 +2,8 @@
     /* Colores de la institución: cambia estos valores para personalizar la UI */
     --brand-primary: #a6e3a1;
     --brand-text: #cdd6f4;
+    --light: #f8f9fa;
+    --polytech-blue: #004785;
 }
 
 body {
@@ -18,12 +20,11 @@ body {
     transform: translateX(-50%);
     z-index: 999;
     /* Asegura que flote sobre la cámara */
-    background: rgba(17, 17, 27, 0.85);
-    backdrop-filter: blur(8px);
-    color: #cdd6f4;
+    background: var(--light);
+    color: var(--polytech-blue);
     padding: 12px 24px;
     border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(0, 71, 133, 0.15);
     text-align: center;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     pointer-events: none;
@@ -35,7 +36,7 @@ body {
 #ui-overlay h1 {
     font-size: 1.2rem;
     margin: 0 0 4px 0;
-    color: #a6e3a1;
+    color: var(--polytech-blue);
 }
 
 #ui-overlay p {
