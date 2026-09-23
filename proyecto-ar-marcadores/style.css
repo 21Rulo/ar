@@ -9,6 +9,8 @@
 body {
     margin: 0;
     overflow: hidden;
+    /* Fondo negro puro: es lo que se ve mientras la cámara se oculta al girar */
+    background-color: #000;
     font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
@@ -73,4 +75,19 @@ body {
 .a-enter-vr,
 .a-enter-ar {
     display: none !important;
+}
+
+/* ---------------------------------------------------------------------------
+   Fundido a negro al girar el dispositivo
+   MindAR inserta el <video> de la cámara directamente en <body> (no dentro de
+   <a-scene>), así que hay que ocultar ambos para tapar el fotograma congelado.
+   --------------------------------------------------------------------------- */
+a-scene,
+body > video {
+    transition: opacity 0.4s ease;
+}
+
+body.ar-restarting a-scene,
+body.ar-restarting > video {
+    opacity: 0;
 }

@@ -205,21 +205,31 @@ function handleOrientationChanges() {
 
   let restartTimer = null;
 
+  // `arSystem.start()` es síncrono y regresa antes de que la cámara esté lista,
+  // así que devolvemos la escena hasta que MindAR emite `arReady` (o `arError`).
+  const showScene = () => document.body.classList.remove('ar-restarting');
+  scene.addEventListener('arReady', showScene);
+  scene.addEventListener('arError', showScene);
+
   const restartAR = () => {
     clearTimeout(restartTimer);
+    // Fundido a negro inmediato para no mostrar el último fotograma congelado.
+    document.body.classList.add('ar-restarting');
+    video.pause();
+    soundButton.hidden = true;
+
     // Esperamos a que el navegador termine de rotar y reajustar el viewport.
-    restartTimer = setTimeout(async () => {
+    restartTimer = setTimeout(() => {
       console.log('[AR] Cambio de orientación → reiniciando MindAR');
-      video.pause();
-      soundButton.hidden = true;
       setStatus(STATUS.IDLE);
       try {
         arSystem.stop();
-        await arSystem.start();
+        arSystem.start();
       } catch (err) {
         console.error('[AR] No se pudo reiniciar MindAR tras rotar:', err);
+        showScene();
       }
-    }, 500);
+    }, 600);
   };
 
   if (screen.orientation?.addEventListener) {

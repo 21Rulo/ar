@@ -26,7 +26,7 @@
     <!-- Escena de Realidad Aumentada de MindAR -->
     <!-- 'imageTargetSrc' apunta al archivo compilado de tu póster -->
     <a-scene
-        mindar-image="imageTargetSrc: public/targets.mind; autoStart: true; uiLoading: no; uiScanning: no; uiError: no;"
+        mindar-image="imageTargetSrc: public/targets.mind; autoStart: true; uiLoading: no; uiScanning: no; uiError: no; filterMinCF: 0.0001; filterBeta: 0.01;"
         color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false"
         xr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
 
