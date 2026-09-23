@@ -33,6 +33,13 @@ body {
     /* No interfiere con clicks en la pantalla */
     width: 80%;
     max-width: 450px;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* Oculta la leyenda mientras el video se reproduce sobre el póster */
+body.video-playing #ui-overlay {
+    opacity: 0;
+    visibility: hidden;
 }
 
 #ui-overlay h1 {

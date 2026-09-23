@@ -270,6 +270,13 @@ function init() {
 
   soundButton.addEventListener('click', toggleSound);
 
+  // La leyenda superior se oculta mientras el video se reproduce y vuelve
+  // en cuanto se pausa (póster perdido, rotación, etc.).
+  const setVideoPlaying = (playing) => document.body.classList.toggle('video-playing', playing);
+  video.addEventListener('playing', () => setVideoPlaying(true));
+  video.addEventListener('pause', () => setVideoPlaying(false));
+  video.addEventListener('ended', () => setVideoPlaying(false));
+
   handleOrientationChanges();
 
   setStatus(STATUS.IDLE);
